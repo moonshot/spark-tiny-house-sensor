@@ -2,12 +2,17 @@
 #include "OneWire.h"
 
 float celsius;
-char cel[8];
-OneWire ds = OneWire(D3);  // on pin 10 (a 4.7K resistor is necessary)
+char cel[8] = "NONE";
+char far[8] = "NONE";
+int temp_sensor = D3;
+
+OneWire ds = OneWire(temp_sensor);  // on pin D3 (a 4.7K resistor is necessary)
 
 void setup() {
   Serial.begin(9600);
-  //Spark.variable("temp",&cel,STRING);
+  Spark.variable("cel",&cel,STRING);
+  Spark.variable("far",&far,STRING);
+  pinMode(temp_sensor, INPUT);
 }
 
 void loop() {
@@ -63,9 +68,7 @@ void loop() {
       return;
   }
 
-         // start conversion, with parasite power on at the end
-
-
+  // start conversion, with parasite power on at the end
   present = ds.reset();
   ds.select(addr);
   ds.write(0xBE);         // Read Scratchpad
@@ -102,13 +105,12 @@ void loop() {
     //// default is 12 bit resolution, 750 ms conversion time
   }
   celsius = (float)raw / 16.0;
-  sprintf(cel,"%f",celsius);
+  sprintf(cel,"%f.1", celsius);
   fahrenheit = celsius * 1.8 + 32.0;
+  sprintf(far,"%f.1", fahrenheit);
   Serial.print("  Temperature = ");
   Serial.print(celsius);
   Serial.print(" Celsius, ");
   Serial.print(fahrenheit);
   Serial.println(" Fahrenheit");
-
-
 }
