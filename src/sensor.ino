@@ -3,7 +3,8 @@
 uint8_t rom[8];
 uint8_t resp[9];
 char result[16] = "NONE";
-char device[16] = "NONE";
+char device[9] = "NONE";
+char event_name[16] = "NONE";
 
 int temp_sensor = D3;
 OneWire d3 = OneWire(temp_sensor);  // DS18B20 on pin D3
@@ -62,7 +63,8 @@ void loop() {
   sprintf(result, "%2.2f", fahrenheit);
   sprintf(device, "%x%x%x%x%x%x%x%x", rom[0], rom[1],
     rom[2], rom[3], rom[4], rom[5], rom[6], rom[7]);
+  sprintf(event_name, "sensor.%s", device);
 
-  Spark.publish(device, String(result), 60, PRIVATE);
+  Spark.publish(event_name, String(result), 60, PRIVATE);
   lastPublish = now;
 }
